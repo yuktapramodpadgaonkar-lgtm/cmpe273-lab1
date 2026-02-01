@@ -1,10 +1,13 @@
 from flask import Flask, jsonify, request
+from threading import Lock
+import os
 
 app = Flask(__name__)
 
-# In-memory data store
+# In-memory data store with thread safety
 data_store = {}
 counter = 0
+data_lock = Lock()
 
 
 @app.route('/')
@@ -54,12 +57,13 @@ def create_item():
             'error': 'Invalid request. JSON body required'
         }), 400
     
-    counter += 1
-    item = {
-        'id': counter,
-        'data': request.json
-    }
-    data_store[counter] = item
+    with data_lock:
+        counter += 1
+        item = {
+            'id': counter,
+            'data': request.json
+        }
+        data_store[counter] = item
     
     return jsonify(item), 201
 
@@ -77,9 +81,11 @@ def update_item(item_id):
             'error': 'Invalid request. JSON body required'
         }), 400
     
-    data_store[item_id]['data'] = request.json
+    with data_lock:
+        data_store[item_id]['data'] = request.json
+        updated_item = data_store[item_id]
     
-    return jsonify(data_store[item_id])
+    return jsonify(updated_item)
 
 
 @app.route('/api/items/<int:item_id>', methods=['DELETE'])
@@ -90,7 +96,8 @@ def delete_item(item_id):
             'error': 'Item not found'
         }), 404
     
-    deleted_item = data_store.pop(item_id)
+    with data_lock:
+        deleted_item = data_store.pop(item_id)
     
     return jsonify({
         'message': 'Item deleted successfully',
@@ -99,4 +106,9 @@ def delete_item(item_id):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # Get configuration from environment variables
+    debug_mode = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
+    host = os.getenv('FLASK_HOST', '127.0.0.1')
+    port = int(os.getenv('FLASK_PORT', '5000'))
+    
+    app.run(host=host, port=port, debug=debug_mode)

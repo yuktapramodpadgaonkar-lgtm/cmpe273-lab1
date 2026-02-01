@@ -34,7 +34,22 @@ Start the Flask application:
 python app.py
 ```
 
-The server will start on `http://localhost:5000`
+The server will start on `http://localhost:5000` by default.
+
+### Configuration Options
+
+You can configure the application using environment variables:
+
+- `FLASK_DEBUG`: Set to `true` to enable debug mode (default: `false`)
+- `FLASK_HOST`: Host to bind to (default: `127.0.0.1`)
+- `FLASK_PORT`: Port to bind to (default: `5000`)
+
+Example with custom configuration:
+```bash
+FLASK_DEBUG=true FLASK_HOST=0.0.0.0 FLASK_PORT=8080 python app.py
+```
+
+**Note**: For security reasons, debug mode is disabled by default and the server only binds to localhost.
 
 ## API Endpoints
 

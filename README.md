@@ -18,7 +18,14 @@ Minimum requirements:
 - Timeout handling in Service B
 - Demonstrate independent failure (stop A; B returns 503 and logs error)
 
-## How to Run Locally - PYTHON HTTP TRACK
+Deliverables
+1. Repo link
+2. README updates:
+     - how to run locally
+     - success + failure proof (curl output or screenshot)
+     - 1 short paragraph: “What makes this distributed?”
+
+## READ ME UPDATE : How to Run Locally - PYTHON HTTP TRACK
 
 ### Prerequisites
 - Python 3.8 or higher
@@ -28,13 +35,17 @@ Minimum requirements:
 
 1. **Clone the repository**
    ```bash
-   git clone <your-repo-url>
+   #Navigate into the folder where you want to keep the repository
    cd lab1-repo
+   
+   git clone https://github.com/ranjanr/cmpe273-week1-lab1-starter
+   
    ```
 
 2. **Switch to the desired branch**
    ```bash
-   git checkout <branch-name>
+   #git checkout <branch-name>
+   git checkout main
    ```
 
 3. **Navigate to Python HTTP directory**
@@ -94,41 +105,37 @@ For detailed setup instructions, see [`python-http/README.md`](python-http/READM
 Test Service B calling Service A successfully:
 
 ```bash
-curl "http://127.0.0.1:8081/call-echo?msg=hello"
+curl "http://127.0.0.1:8081/call-echo?msg=test"
 ```
 
-**Expected Response:**
-```json
-{
-  "service_b": "ok",
-  "service_a": {
-    "echo": "hello"
-  }
-}
-```
+
+**Response:** <br>
+Service B log: <img width="1291" height="357" alt="Success-serviceB" src="https://github.com/user-attachments/assets/6c95ec41-d9cb-456d-852c-84350740291d" />  
+Service A logs: <img width="1293" height="358" alt="Success-serviceA" src="https://github.com/user-attachments/assets/f18807aa-2171-4c55-a57f-5af6652c8e4f" />  
+Curl command response: <img width="1326" height="690" alt="Success-curl-cmd" src="https://github.com/user-attachments/assets/9a491bb5-f666-4def-8db1-c6330af5452b" /> 
 
 ### Failure Case
 
 1. Stop Service A (press `Ctrl+C` in Service A terminal)
 2. Run the same curl command:
    ```bash
-   curl "http://127.0.0.1:8081/call-echo?msg=hello"
+   curl "http://127.0.0.1:8081/call-echo?msg=test"
    ```
 
-**Expected Response:**
-```json
-{
-  "service_b": "ok",
-  "service_a": "unavailable",
-  "error": "<connection error details>"
-}
-```
+**Response:**
 
+Service B logs: <img width="1328" height="326" alt="Failure-serviceB" src="https://github.com/user-attachments/assets/e5b80c9a-ffea-459c-83a7-7aafabc6e061" />
+Curl command response: <img width="1333" height="498" alt="Failure-curl-cmd" src="https://github.com/user-attachments/assets/567b6302-ff9b-48e1-8814-3e654373d885" />
+  
 **HTTP Status:** 503 Service Unavailable
 
 This demonstrates independent failure handling - Service B continues running and gracefully handles Service A's unavailability.
 
 ## What Makes This Distributed?
+
+This system is distributed because it consists of two independent services running as separate processes that communicate over the network using HTTP. Service B depends on Service A through a network call rather than shared memory or direct function calls, which introduces latency, timeouts, and the possibility of partial failure. Each service can start, stop, and fail independently, and Service B must handle cases where Service A is unavailable. These characteristics—network communication, independent failure, and lack of shared state—are fundamental properties of a distributed system.
+
+More details for self understanding:
 
 A distributed system is a system where:
 - multiple independent processes
@@ -222,9 +229,3 @@ In real distributed systems, logs are often the only way to debug failures acros
 - Service B wouldn't change — just the host/port
 - That's exactly how real systems are designed.
 
-## Deliverables
-1. Repo link
-2. README updates:
-   - ✅ how to run locally
-   - ✅ success + failure proof (curl output or screenshot)
-   - ✅ "What makes this distributed?" section

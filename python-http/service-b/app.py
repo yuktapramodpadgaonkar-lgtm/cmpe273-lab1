@@ -28,3 +28,7 @@ def call_echo():
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=8081)
+    
+    # import os
+    # debug_mode = os.getenv("FLASK_DEBUG", "0") == "1"
+    # app.run(host="127.0.0.1", port=8081, debug=debug_mode)
